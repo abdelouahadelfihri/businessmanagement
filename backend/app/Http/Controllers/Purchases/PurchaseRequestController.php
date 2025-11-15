@@ -1,65 +1,61 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Purchase;
 
-use App\Models\Models\Purchase\PurchaseRequest;
+use App\Http\Controllers\Controller;
+use App\Models\Purchase\PurchaseRequest;
 use Illuminate\Http\Request;
 
 class PurchaseRequestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // GET /purchase-requests
     public function index()
     {
-        //
+        return response()->json(PurchaseRequest::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    // POST /purchase-requests
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'description' => 'required|string',
+            'date'        => 'required|date',
+            'status'      => 'nullable|string'
+        ]);
+
+        $purchaseRequest = PurchaseRequest::create($validated);
+
+        return response()->json($purchaseRequest, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(PurchaseRequest $purchaseRequest)
+    // GET /purchase-requests/{id}
+    public function show($id)
     {
-        //
+        return response()->json(PurchaseRequest::findOrFail($id));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(PurchaseRequest $purchaseRequest)
+    // PUT/PATCH /purchase-requests/{id}
+    public function update(Request $request, $id)
     {
-        //
+        $purchaseRequest = PurchaseRequest::findOrFail($id);
+
+        $validated = $request->validate([
+            'description' => 'sometimes|string',
+            'date'        => 'sometimes|date',
+            'status'      => 'sometimes|string'
+        ]);
+
+        $purchaseRequest->update($validated);
+
+        return response()->json($purchaseRequest);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, PurchaseRequest $purchaseRequest)
+    // DELETE /purchase-requests/{id}
+    public function destroy($id)
     {
-        //
-    }
+        $purchaseRequest = PurchaseRequest::findOrFail($id);
+        $purchaseRequest->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(PurchaseRequest $purchaseRequest)
-    {
-        //
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }
