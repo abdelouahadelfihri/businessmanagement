@@ -1,65 +1,64 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Sales;
 
-use App\Models\Models\Sales\SalesDelivery;
+use App\Http\Controllers\Controller;
+use App\Models\Sales\SalesDelivery;
 use Illuminate\Http\Request;
 
 class SalesDeliveryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(
+            SalesDelivery::with('salesOrder')->get()
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'sales_order_id' => 'required|exists:sales_orders,id',
+            'delivery_number' => 'required|string|unique:sales_deliveries',
+            'date' => 'required|date',
+            'status' => 'nullable|string',
+            'total' => 'required|numeric'
+        ]);
+
+        $delivery = SalesDelivery::create($validated);
+
+        return response()->json($delivery, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(SalesDelivery $salesDelivery)
+    public function show($id)
     {
-        //
+        return response()->json(
+            SalesDelivery::with('salesOrder')->findOrFail($id)
+        );
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(SalesDelivery $salesDelivery)
+    public function update(Request $request, $id)
     {
-        //
+        $delivery = SalesDelivery::findOrFail($id);
+
+        $validated = $request->validate([
+            'sales_order_id' => 'sometimes|exists:sales_orders,id',
+            'delivery_number' => 'sometimes|string|unique:sales_deliveries,delivery_number,' . $id,
+            'date' => 'sometimes|date',
+            'status' => 'sometimes|string',
+            'total' => 'sometimes|numeric'
+        ]);
+
+        $delivery->update($validated);
+
+        return response()->json($delivery);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, SalesDelivery $salesDelivery)
+    public function destroy($id)
     {
-        //
-    }
+        $delivery = SalesDelivery::findOrFail($id);
+        $delivery->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(SalesDelivery $salesDelivery)
-    {
-        //
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }
