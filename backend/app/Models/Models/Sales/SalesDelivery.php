@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Models\Sales;
+namespace App\Models\Sales;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -8,4 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class SalesDelivery extends Model
 {
     use HasFactory;
+
+    protected $table = 'sales_deliveries';
+
+    protected $fillable = [
+        'sales_order_id',
+        'delivery_number',
+        'date',
+        'status',
+        'total'
+    ];
+
+    public function salesOrder()
+    {
+        return $this->belongsTo(SalesOrder::class, 'sales_order_id');
+    }
 }
