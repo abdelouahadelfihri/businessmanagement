@@ -1,6 +1,6 @@
 // src/components/pickers/EntityPicker.jsx
 import React, { useEffect, useState } from "react";
-import { Select, Button } from "@mui/material";
+import { Select, Button, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 export default function EntityPicker({ 
   apiGet,      // function to fetch list
@@ -42,20 +42,23 @@ export default function EntityPicker({
 
   return (
     <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-      <Select
-        value={value || ""}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={loading}
-      >
-        <option value="" disabled>
-          {loading ? `Loading ${label}...` : `Select ${label}`}
-        </option>
-        {items.map((item) => (
-          <option key={item.id} value={item.id}>
-            {item.name}
-          </option>
-        ))}
-      </Select>
+      <FormControl sx={{ minWidth: 250 }}> {/* make select wider */}
+        <InputLabel>{loading ? `Loading ${label}...` : label}</InputLabel>
+        <Select
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          label={label}
+        >
+          <MenuItem value="">
+            <em>{loading ? `Loading ${label}...` : `Select ${label}`}</em>
+          </MenuItem>
+          {items.map((item) => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <Button variant="outlined" onClick={handleAddNew}>
         Add {label}
       </Button>
