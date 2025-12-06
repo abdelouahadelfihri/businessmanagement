@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SupplierPicker from "../../../components/pickers/SupplierPicker";
 import { useNavigate } from "react-router-dom";
-import { createPurchaseRequest, setFormField } from "../../../store/purchaseRequestSlice";
+import { createPurchaseRequest, setFormField } from "../../../slices/purchases/purchaseRequestSlice";
 
 export default function PurchaseRequestCreate() {
   const dispatch = useDispatch();
