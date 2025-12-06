@@ -1,33 +1,38 @@
 // src/pages/purchaseRequests/PurchaseRequestCreate.jsx
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SupplierPicker from "../../../components/pickers/SupplierPicker";
 import { useNavigate } from "react-router-dom";
-import { createPurchaseRequest, setFormField } from "../../../slices/purchases/purchaseRequestSlice";
+import {
+  createPurchaseRequest,
+  setFormField,
+  clearForm,
+} from "../../../slices/purchases/purchaseRequestSlice";
 
 export default function PurchaseRequestCreate() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, error } = useSelector((state) => state.purchaseRequest);
+  // Get form, loading, and error from Redux slice
+  const { form, loading, error } = useSelector(
+    (state) => state.purchaseRequest
+  );
 
-  const [form, setForm] = useState({
-    supplier_id: "",
-    description: "",
-    date: "",
-    status: "pending",
-  });
+  // Clear form on mount
+  useEffect(() => {
+    dispatch(clearForm());
+  }, [dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    dispatch(setFormField({ name, value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await dispatch(createPurchaseRequest(form)).unwrap();
-      navigate("/purchase-requests"); // go back to the list after creation
+      navigate("/purchase-requests");
     } catch (err) {
       console.error("Failed to save purchase request:", err);
     }
@@ -43,7 +48,9 @@ export default function PurchaseRequestCreate() {
       >
         <SupplierPicker
           value={form.supplier_id}
-          onChange={(id) => setForm((prev) => ({ ...prev, supplier_id: id }))}
+          onChange={(id) =>
+            dispatch(setFormField({ name: "supplier_id", value: id }))
+          }
         />
 
         <input
@@ -76,6 +83,7 @@ export default function PurchaseRequestCreate() {
         <button type="submit" disabled={loading}>
           {loading ? "Saving..." : "Save"}
         </button>
+
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </div>
