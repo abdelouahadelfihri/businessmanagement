@@ -2,100 +2,37 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-
-import { addSupplierThunk } from "../../../slices/purchases/supplierSlice";
+import { createSupplier, setSupplier } from "../../slices/purchases/supplierSlice";
 
 export default function SupplierCreate() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const autoSelect = new URLSearchParams(location.search).get("autoSelect") === "true";
 
-  const query = new URLSearchParams(location.search);
-  const autoSelect = query.get("autoSelect") === "true";
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const newSupplier = await dispatch(addSupplierThunk(form)).unwrap();
-
-      if (autoSelect) {
-        // Optional: dispatch some action to store selected supplier
-        // dispatch(setSupplier(newSupplier));
-        return navigate(-1); // go back to picker screen
-      }
-
+    const newSupplier = await dispatch(createSupplier(form)).unwrap();
+    if (autoSelect) {
+      dispatch(setSupplier(newSupplier));
+      navigate(-1); // go back to previous screen
+    } else {
       navigate("/suppliers");
-    } catch (err) {
-      console.error("Error creating supplier:", err);
-      setError(err.message || "Failed to create supplier");
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <form onSubmit={handleSubmit} style={{ maxWidth: 400, padding: 20 }}>
       <h2>Add Supplier</h2>
-
-      <form onSubmit={handleSubmit} style={{ maxWidth: "400px", display: "flex", flexDirection: "column", gap: "12px" }}>
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Phone:</label>
-          <input
-            type="text"
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-          />
-        </div>
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save"}
-          </button>
-          <button type="button" onClick={() => navigate("/suppliers")}>
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
+      <input name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
+      <input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
+      <input name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} />
+      <button type="submit">Save</button>
+      <button type="button" onClick={() => navigate(-1)} style={{ marginLeft: 8 }}>Cancel</button>
+    </form>
   );
 }
