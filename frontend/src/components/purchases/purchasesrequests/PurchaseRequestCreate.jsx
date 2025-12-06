@@ -47,10 +47,8 @@ export default function PurchaseRequestCreate() {
         style={{ display: "flex", flexDirection: "column", gap: "12px" }}
       >
         <SupplierPicker
-          value={form.supplier_id}
-          onChange={(id) =>
-            dispatch(setFormField({ name: "supplier_id", value: id }))
-          }
+          value={supplier?.id || form.supplier_id}
+          onChange={(id) => dispatch(setFormField({ name: "supplier_id", value: id }))}
         />
 
         <input
