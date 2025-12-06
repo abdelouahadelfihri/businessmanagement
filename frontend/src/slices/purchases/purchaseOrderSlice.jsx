@@ -1,4 +1,4 @@
-// src/slices/purchases/purchaseOrderSlice.jsx
+// src/slices/purchases/purchaseOrderSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Fetch all purchase orders
@@ -43,10 +43,18 @@ const purchaseOrderSlice = createSlice({
   name: "purchaseOrders",
   initialState: {
     list: [],
+    selected: null,       // ⬅️ NEW
     status: "idle",
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setSelectedPurchaseOrder(state, action) {
+      state.selected = action.payload;
+    },
+    clearSelectedPurchaseOrder(state) {
+      state.selected = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPurchaseOrders.fulfilled, (state, action) => {
@@ -64,10 +72,17 @@ const purchaseOrderSlice = createSlice({
         state.list.push(action.payload);
       })
       .addCase(updatePurchaseOrder.fulfilled, (state, action) => {
-        const idx = state.list.findIndex((p) => p.id === action.payload.id);
+        const idx = state.list.findIndex(
+          (p) => p.id === action.payload.id
+        );
         if (idx !== -1) state.list[idx] = action.payload;
       });
   },
 });
+
+export const {
+  setSelectedPurchaseOrder,
+  clearSelectedPurchaseOrder,
+} = purchaseOrderSlice.actions;
 
 export default purchaseOrderSlice.reducer;
