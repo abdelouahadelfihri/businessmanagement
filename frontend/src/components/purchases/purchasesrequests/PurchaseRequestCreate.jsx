@@ -1,23 +1,20 @@
-// src/pages/receipts/ReceiptAdd.jsx
+// src/pages/purchaseRequests/PurchaseRequestCreate.jsx
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SupplierPicker from "../../../components/pickers/SupplierPicker";
-import PurchaseOrderPicker from "../../../components/pickers/PurchaseOrderPicker";
 import { useNavigate } from "react-router-dom";
-import { createReceipt } from "../../../slices/receipts/receiptSlice"; // make sure this exists in your slice
+import { createPurchaseRequest, setFormField } from "../../../store/purchaseRequestSlice";
 
 export default function PurchaseRequestCreate() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, error } = useSelector((state) => state.receipts || {});
+  const { loading, error } = useSelector((state) => state.purchaseRequest);
 
   const [form, setForm] = useState({
     supplier_id: "",
-    purchase_order_id: "",
-    receipt_number: "",
+    description: "",
     date: "",
-    total: "",
     status: "pending",
   });
 
@@ -29,16 +26,16 @@ export default function PurchaseRequestCreate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(createReceipt(form)).unwrap(); // ensures proper async handling
-      navigate("/receipts");
+      await dispatch(createPurchaseRequest(form)).unwrap();
+      navigate("/purchase-requests"); // go back to the list after creation
     } catch (err) {
-      console.error("Failed to save receipt:", err);
+      console.error("Failed to save purchase request:", err);
     }
   };
 
   return (
     <div style={{ padding: 20, maxWidth: 600 }}>
-      <h2>Add Receipt</h2>
+      <h2>Create Purchase Request</h2>
 
       <form
         onSubmit={handleSubmit}
@@ -49,18 +46,11 @@ export default function PurchaseRequestCreate() {
           onChange={(id) => setForm((prev) => ({ ...prev, supplier_id: id }))}
         />
 
-        <PurchaseOrderPicker
-          value={form.purchase_order_id}
-          onChange={(id) =>
-            setForm((prev) => ({ ...prev, purchase_order_id: id }))
-          }
-        />
-
         <input
           type="text"
-          name="receipt_number"
-          placeholder="Receipt Number"
-          value={form.receipt_number}
+          name="description"
+          placeholder="Description"
+          value={form.description}
           onChange={handleChange}
           required
         />
@@ -73,23 +63,14 @@ export default function PurchaseRequestCreate() {
           required
         />
 
-        <input
-          type="number"
-          name="total"
-          placeholder="Total"
-          value={form.total}
-          onChange={handleChange}
-          required
-        />
-
         <select
           name="status"
           value={form.status}
           onChange={handleChange}
         >
           <option value="pending">Pending</option>
-          <option value="paid">Paid</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
         </select>
 
         <button type="submit" disabled={loading}>
