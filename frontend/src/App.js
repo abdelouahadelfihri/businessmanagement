@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import SupplierCreate from "./components/Purchases/Suppliers/SupplierCreate"
-import SupplierList from "./components/Purchases/Suppliers/SupplierList"
-import PurchaseRequestCreate from "./components/Purchases/PurchasesRequests/PurchaseRequestCreate"
-import PurchaseRequestList from "./components/Purchases/PurchasesRequests/PurchaseRequestList"
-import PurchaseOrderCreate from "./components/Purchases/PurchasesOrders/PurchaseOrderCreate"
-import PurchaseOrderList from "./components/Purchases/PurchasesOrders/PurchaseOrderList"
+import SupplierCreate from "./components/purchases/suppliers/SupplierCreate"
+import SupplierList from "./components/purchases/suppliers/SupplierList"
+import PurchaseRequestCreate from "./components/purchases/purchasesRequests/PurchaseRequestCreate"
+import PurchaseRequestList from "./components/purchases/purchasesRequests/PurchaseRequestList"
+import PurchaseOrderCreate from "./components/purchases/purchasesOrders/PurchaseOrderCreate"
+import PurchaseOrderList from "./components/purchases/purchasesOrders/PurchaseOrderList"
 
 function App() {
   const [collapsed, setCollapsed] = useState(false);
