@@ -3,10 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import SupplierCreate from "./components/purchases/suppliers/SupplierCreate"
 import SupplierList from "./components/purchases/suppliers/SupplierList"
-import PurchaseRequestCreate from "./components/purchases/purchasesRequests/PurchaseRequestCreate"
-import PurchaseRequestList from "./components/purchases/purchasesRequests/PurchaseRequestList"
-import PurchaseOrderCreate from "./components/purchases/purchasesOrders/PurchaseOrderCreate"
-import PurchaseOrderList from "./components/purchases/purchasesOrders/PurchaseOrderList"
+import PurchaseRequestCreate from "./components/purchases/purchasesrequests/PurchaseRequestCreate"
+import PurchaseRequestList from "./components/purchases/purchasesrequests/PurchaseRequestList"
+import PurchaseOrderCreate from "./components/purchases/purchasesorders/PurchaseOrderCreate"
+import PurchaseOrderList from "./components/purchases/purchasesorders/PurchaseOrderList"
 
 function App() {
   const [collapsed, setCollapsed] = useState(false);
