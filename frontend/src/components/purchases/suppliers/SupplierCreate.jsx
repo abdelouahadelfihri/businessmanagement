@@ -10,7 +10,12 @@ export default function SupplierCreate() {
   const location = useLocation();
   const autoSelect = new URLSearchParams(location.search).get("autoSelect") === "true";
 
-  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",  // ⬅️ added field
+  });
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -19,7 +24,7 @@ export default function SupplierCreate() {
     const newSupplier = await dispatch(addSupplierThunk(form)).unwrap();
     if (autoSelect) {
       dispatch(setSupplier(newSupplier));
-      navigate(-1); // go back to previous screen (picker)
+      navigate(-1); // go back to previous screen
     } else {
       navigate("/suppliers");
     }
@@ -28,11 +33,56 @@ export default function SupplierCreate() {
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: 400, padding: 20 }}>
       <h2>Add Supplier</h2>
-      <input name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
-      <input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
-      <input name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} />
+
+      <div style={{ marginBottom: 10 }}>
+        <label>Name:</label>
+        <input
+          type="text"
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div style={{ marginBottom: 10 }}>
+        <label>Email:</label>
+        <input
+          type="email"
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div style={{ marginBottom: 10 }}>
+        <label>Phone:</label>
+        <input
+          type="text"
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div style={{ marginBottom: 10 }}>
+        <label>Address:</label>
+        <input
+          type="text"
+          name="address"
+          value={form.address}
+          onChange={handleChange}
+        />
+      </div>
+
       <button type="submit">Save</button>
-      <button type="button" onClick={() => navigate(-1)} style={{ marginLeft: 8 }}>Cancel</button>
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        style={{ marginLeft: 8 }}
+      >
+        Cancel
+      </button>
     </form>
   );
 }
