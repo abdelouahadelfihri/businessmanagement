@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { createSupplier, setSupplier } from "../../slices/purchases/supplierSlice";
+import { createSupplier, setSupplier } from "../../../slices/purchases/supplierSlice";
 
 export default function SupplierCreate() {
   const dispatch = useDispatch();
@@ -35,5 +35,5 @@ export default function SupplierCreate() {
       <button type="button" onClick={() => navigate(-1)} style={{ marginLeft: 8 }}>Cancel</button>
     </form>
   );
-  
+
 }
