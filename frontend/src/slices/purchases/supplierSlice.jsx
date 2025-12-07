@@ -1,48 +1,61 @@
+// src/slices/purchases/supplierSlice.jsx
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../api/api"; // axios instance
 
-// ---------------------------------------------------
-//  Async thunks
-// ---------------------------------------------------
+// Fetch suppliers
 export const fetchSuppliers = createAsyncThunk(
-  "suppliers/fetchSuppliers",
+  "suppliers/fetch",
   async () => {
-    const res = await axios.get("/api/suppliers");
+    const res = await api.get("/suppliers");
     return res.data;
   }
 );
 
+// Add supplier
 export const addSupplierThunk = createAsyncThunk(
-  "suppliers/addSupplier",
+  "suppliers/add",
   async (payload) => {
-    const res = await axios.post("/api/suppliers", payload);
-    return res.data; // new supplier object
+    const res = await api.post("/suppliers", payload);
+    return res.data;
   }
 );
 
-// ---------------------------------------------------
-//  Slice
-// ---------------------------------------------------
+// Update supplier
+export const updateSupplierThunk = createAsyncThunk(
+  "suppliers/update",
+  async ({ id, data }) => {
+    const res = await api.put(`/suppliers/${id}`, data);
+    return res.data;
+  }
+);
+
+// Delete supplier
+export const deleteSupplierThunk = createAsyncThunk(
+  "suppliers/delete",
+  async (id) => {
+    await api.delete(`/suppliers/${id}`);
+    return id;
+  }
+);
+
 const supplierSlice = createSlice({
   name: "suppliers",
   initialState: {
     list: [],
-    selectedSupplier: null, // used by SupplierPicker
     loading: false,
     error: null,
+    selected: null, // selected supplier for pickers
   },
-
   reducers: {
-    // used when coming back from SupplierCreate with ?autoSelect=true
     setSupplier(state, action) {
-      state.selectedSupplier = action.payload;
+      state.selected = action.payload;
+    },
+    clearSupplier(state) {
+      state.selected = null;
     },
   },
-
   extraReducers: (builder) => {
     builder
-
-      // fetch suppliers
       .addCase(fetchSuppliers.pending, (state) => {
         state.loading = true;
       })
@@ -50,17 +63,22 @@ const supplierSlice = createSlice({
         state.loading = false;
         state.list = action.payload;
       })
-      .addCase(fetchSuppliers.rejected, (state) => {
+      .addCase(fetchSuppliers.rejected, (state, action) => {
         state.loading = false;
-        state.error = "Failed to load suppliers";
+        state.error = action.error.message;
       })
-
-      // add supplier
       .addCase(addSupplierThunk.fulfilled, (state, action) => {
-        state.list.push(action.payload); // update list in memory
+        state.list.push(action.payload);
+      })
+      .addCase(updateSupplierThunk.fulfilled, (state, action) => {
+        const idx = state.list.findIndex((s) => s.id === action.payload.id);
+        if (idx !== -1) state.list[idx] = action.payload;
+      })
+      .addCase(deleteSupplierThunk.fulfilled, (state, action) => {
+        state.list = state.list.filter((s) => s.id !== action.payload);
       });
   },
 });
 
-export const { setSupplier } = supplierSlice.actions;
+export const { setSupplier, clearSupplier } = supplierSlice.actions;
 export default supplierSlice.reducer;

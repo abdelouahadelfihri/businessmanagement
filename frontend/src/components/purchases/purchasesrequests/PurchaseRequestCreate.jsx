@@ -13,8 +13,8 @@ export default function PurchaseRequestCreate() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get form, loading, and error from Redux slice
-  const { form, loading, error } = useSelector(
+  // Get form, loading, error, and selected supplier from Redux slice
+  const { form, loading, error, supplier } = useSelector(
     (state) => state.purchaseRequest
   );
 
@@ -48,7 +48,9 @@ export default function PurchaseRequestCreate() {
       >
         <SupplierPicker
           value={supplier?.id || form.supplier_id}
-          onChange={(id) => dispatch(setFormField({ name: "supplier_id", value: id }))}
+          onChange={(id) =>
+            dispatch(setFormField({ name: "supplier_id", value: id }))
+          }
         />
 
         <input
