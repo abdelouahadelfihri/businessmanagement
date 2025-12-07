@@ -1,18 +1,19 @@
-// src/components/pickers/PurchaseOrderPicker.jsx
+// src/components/pickers/OrderPicker.jsx
 import React from "react";
 import { useDispatch } from "react-redux";
 import EntityPicker from "./EntityPicker";
-import { fetchPurchaseOrders, createPurchaseOrder } from "../../slices/purchases/purchaseOrderSlice";
+import { fetchPurchaseOrders, addPurchaseOrderThunk } from "../../slices/purchases/purchaseOrderSlice";
 
-export default function PurchaseOrderPicker(props) {
+export default function OrderPicker({ value, onChange }) {
   const dispatch = useDispatch();
 
   return (
     <EntityPicker
       apiGet={() => dispatch(fetchPurchaseOrders()).unwrap()}
-      apiAdd={(data) => dispatch(createPurchaseOrder(data)).unwrap()} // create new order
+      apiAdd={(data) => dispatch(addPurchaseOrderThunk(data)).unwrap()}
       label="Purchase Order"
-      {...props}
+      value={value}
+      onChange={onChange}
     />
   );
 }
