@@ -35,4 +35,5 @@ export default function SupplierCreate() {
       <button type="button" onClick={() => navigate(-1)} style={{ marginLeft: 8 }}>Cancel</button>
     </form>
   );
+  
 }
