@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { fetchSuppliers, setSupplier } from "../../slices/purchases/supplierSlice";
+import { fetchSuppliers, setSupplier } from "../../../slices/purchases/supplierSlice";
 
 export default function SupplierList() {
   const dispatch = useDispatch();
