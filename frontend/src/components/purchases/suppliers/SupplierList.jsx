@@ -1,49 +1,50 @@
 // src/pages/suppliers/SupplierList.jsx
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSuppliers, setSupplier } from "../../../slices/purchases/supplierSlice";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchSuppliers, deleteSupplierThunk } from "../../../slices/purchases/supplierSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function SupplierList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const autoSelect = new URLSearchParams(location.search).get("autoSelect") === "true";
-
   const { list, loading } = useSelector((state) => state.suppliers);
 
   useEffect(() => {
     dispatch(fetchSuppliers());
   }, [dispatch]);
 
-  const handleSelect = (supplier) => {
-    if (autoSelect) {
-      dispatch(setSupplier(supplier));
-      navigate(-1);
-    }
-  };
-
   return (
     <div style={{ padding: 20 }}>
       <h2>Suppliers</h2>
-      <button onClick={() => navigate("/suppliers/create" + (autoSelect ? "?autoSelect=true" : ""))}>
-        Add Supplier
-      </button>
+      <button onClick={() => navigate("/suppliers/add")}>Add Supplier</button>
 
-      {loading ? <p>Loading...</p> : (
-        <ul>
+      {loading && <p>Loading...</p>}
+
+      <table style={{ width: "100%", marginTop: 16, borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
           {list.map((s) => (
-            <li key={s.id} style={{ margin: 6 }}>
-              {s.name}{" "}
-              {autoSelect ? (
-                <button onClick={() => handleSelect(s)}>Select</button>
-              ) : (
+            <tr key={s.id}>
+              <td>{s.name}</td>
+              <td>{s.email}</td>
+              <td>{s.phone}</td>
+              <td>{s.address}</td>
+              <td>
                 <button onClick={() => navigate(`/suppliers/edit/${s.id}`)}>Edit</button>
-              )}
-            </li>
+                <button onClick={() => dispatch(deleteSupplierThunk(s.id))} style={{ marginLeft: 5 }}>Delete</button>
+              </td>
+            </tr>
           ))}
-        </ul>
-      )}
+        </tbody>
+      </table>
     </div>
   );
 }
