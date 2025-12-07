@@ -1,18 +1,19 @@
-// src/components/pickers/PurchaseRequestPicker.jsx
+// src/components/pickers/RequestPicker.jsx
 import React from "react";
 import { useDispatch } from "react-redux";
 import EntityPicker from "./EntityPicker";
-import { fetchPurchaseRequests, savePurchaseRequest } from "../../slices/purchases/purchaseRequestSlice";
+import { fetchPurchaseRequests, addPurchaseRequestThunk } from "../../slices/purchases/purchaseRequestSlice";
 
-export default function PurchaseRequestPicker(props) {
+export default function RequestPicker({ value, onChange }) {
   const dispatch = useDispatch();
 
   return (
     <EntityPicker
       apiGet={() => dispatch(fetchPurchaseRequests()).unwrap()}
-      apiAdd={(data) => dispatch(savePurchaseRequest(data)).unwrap()} // create new request
+      apiAdd={(data) => dispatch(addPurchaseRequestThunk(data)).unwrap()}
       label="Purchase Request"
-      {...props}
+      value={value}
+      onChange={onChange}
     />
   );
 }
