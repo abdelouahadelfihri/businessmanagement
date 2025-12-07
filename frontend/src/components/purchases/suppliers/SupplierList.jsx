@@ -1,61 +1,49 @@
 // src/pages/suppliers/SupplierList.jsx
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
 import { fetchSuppliers, setSupplier } from "../../../slices/purchases/supplierSlice";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function SupplierList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const autoSelect = new URLSearchParams(location.search).get("autoSelect") === "true";
 
-  const suppliers = useSelector((state) => state.suppliers.list);
-  const selectMode = new URLSearchParams(location.search).get("selectMode") === "true";
+  const { list, loading } = useSelector((state) => state.suppliers);
 
   useEffect(() => {
-    if (!suppliers.length) dispatch(fetchSuppliers());
-  }, [dispatch, suppliers.length]);
+    dispatch(fetchSuppliers());
+  }, [dispatch]);
 
   const handleSelect = (supplier) => {
-    if (selectMode) {
+    if (autoSelect) {
       dispatch(setSupplier(supplier));
-      navigate(-1); // go back to previous screen
+      navigate(-1);
     }
   };
 
   return (
     <div style={{ padding: 20 }}>
       <h2>Suppliers</h2>
-      <button onClick={() => navigate("/suppliers/create?autoSelect=true")}>
+      <button onClick={() => navigate("/suppliers/create" + (autoSelect ? "?autoSelect=true" : ""))}>
         Add Supplier
       </button>
 
-      <table style={{ width: "100%", marginTop: 16 }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            {selectMode && <th>Select</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {suppliers.map((s) => (
-            <tr key={s.id}>
-              <td>{s.id}</td>
-              <td>{s.name}</td>
-              <td>{s.email}</td>
-              <td>{s.phone}</td>
-              {selectMode && (
-                <td>
-                  <button onClick={() => handleSelect(s)}>Select</button>
-                </td>
+      {loading ? <p>Loading...</p> : (
+        <ul>
+          {list.map((s) => (
+            <li key={s.id} style={{ margin: 6 }}>
+              {s.name}{" "}
+              {autoSelect ? (
+                <button onClick={() => handleSelect(s)}>Select</button>
+              ) : (
+                <button onClick={() => navigate(`/suppliers/edit/${s.id}`)}>Edit</button>
               )}
-            </tr>
+            </li>
           ))}
-        </tbody>
-      </table>
+        </ul>
+      )}
     </div>
   );
 }
