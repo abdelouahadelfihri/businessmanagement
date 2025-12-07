@@ -13,14 +13,10 @@ export default function PurchaseRequestCreate() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get form, loading, error, and selected supplier from Redux slice
-  const { form, loading, error, supplier } = useSelector(
-    (state) => state.purchaseRequest
-  );
+  const { form, loading, error } = useSelector((state) => state.purchaseRequest);
 
-  // Clear form on mount
   useEffect(() => {
-    dispatch(clearForm());
+    dispatch(clearForm()); // clear previous form on mount
   }, [dispatch]);
 
   const handleChange = (e) => {
@@ -46,13 +42,13 @@ export default function PurchaseRequestCreate() {
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", gap: "12px" }}
       >
+        {/* Supplier Picker */}
         <SupplierPicker
-          value={supplier?.id || form.supplier_id}
-          onChange={(id) =>
-            dispatch(setFormField({ name: "supplier_id", value: id }))
-          }
+          value={form.supplier_id}
+          onChange={(id) => dispatch(setFormField({ name: "supplier_id", value: id }))}
         />
 
+        {/* Other fields */}
         <input
           type="text"
           name="description"
@@ -70,11 +66,7 @@ export default function PurchaseRequestCreate() {
           required
         />
 
-        <select
-          name="status"
-          value={form.status}
-          onChange={handleChange}
-        >
+        <select name="status" value={form.status} onChange={handleChange}>
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>
           <option value="rejected">Rejected</option>
@@ -83,7 +75,6 @@ export default function PurchaseRequestCreate() {
         <button type="submit" disabled={loading}>
           {loading ? "Saving..." : "Save"}
         </button>
-
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </div>
