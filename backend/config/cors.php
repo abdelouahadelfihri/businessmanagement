@@ -15,15 +15,15 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*'],  // applies CORS to all API routes
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['*'], // allow all HTTP methods (GET, POST, etc.)
 
-    'allowed_origins' => ['http://localhost:3000'],
+    'allowed_origins' => ['http://localhost:3000'], // your React app URL
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['*'], // allow all headers
 
     'exposed_headers' => [],
 
